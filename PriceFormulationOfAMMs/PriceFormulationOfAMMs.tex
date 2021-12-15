@@ -29,6 +29,11 @@
 \usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{authblk}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\newtheorem{lemma}{Lemma}
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %%% HEADERS & FOOTERS
@@ -53,15 +58,71 @@
 
 %%% The "real" document content comes below...
 
-\title{Price Formulation of AMMs}
+\title{Price Formulation of Constant Function Market Makers}
 \author{Colin Grove}
+\affil{HydraDX}
 \date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
 
 \begin{document}
 \maketitle
 
-%\section{First section}
+\section{Price Functions}
+
+\subsection{Definition of Price Functions}
+
+The purpose of this research note is to explore a way of defining Constant Function Market Makers (CFMMs) by their price functions $p(x,y)$, where $x$ is the quantity of one asset, $y$ the quantity of the second asset, and $p(x,y)$ the spot price of $x$ with numeraire $y$.
+
+Given intervals $I_1\subset [0,\infty)$ and $I_2\subset [0,\infty)$, we define $p:I_1 \times I_2 \to [0,\infty)$ to be a \textbf{price function} provided that $p(x,y)$
+\begin{enumerate}
+\item is non-increasing in $x$,
+\item is non-decreasing in $y$,
+\item is non-negative,
+\item is continuous,
+\item is Lipschitz continuous in $y$ on any closed interval $I \subset I_2$.
+\end{enumerate}
+
+We next prove existence of a CFMM with spot price equal to the any given price function.
+
+\subsection{Existence of CFMM for $p(x,y)$}
+
+We would like to solve the following ODE:
+\begin{align*}
+u'(x) &= -p(x,u(x))\\
+u(x_0) &= y_0
+\end{align*}
+
+It follows from the last condition that the Picard-Lindelof theorem gives us a unique soluction $u(x)$ to the ODE on any closed interval $I\subset I_2$.
+Since the solution is unique, it can be extended to all of $I_2$.
+
+Observe then that $K(x,y) = \frac{y}{u(x)} = 1$ is a constant function from which a CFMM can be built.
+
+Furthermore,
+\begin{align*}
+\frac{\partial K}{\partial x} &= -\frac{y}{u^2(x)}u'(x) = \frac{y}{u^2(x)}p(x,y)\\
+\frac{\partial K}{\partial y} &= \frac{1}{u(x)}
+\end{align*}
+
+Thus the spot price of the CFMM using $K(x,y)$ as the constant function will be $p(x,y)$.
+
+
+\subsection{Properties}
+
+We define the weights intuitively as the percentages of the pool made up of each asset:
+\begin{align*}
+W_x &= \frac{xp(x,y)}{xp(x,y) + y}\\
+W_y &= \frac{y}{xp(x,y) + y}\\
+\end{align*}
+
+Observe that this implies that $p(x,y) = \frac{W_x}{W_y}\frac{y}{x}$, the familiar constant product CFMM price formula.
+
+\section{Scale-Invariant Price Functions}
+
+We say a price function is \textbf{scale-invariant} if $p(kx,ky) = p(x,y)$.
+
+\section{Composing Price Functions}
+
+
 
 %Your text goes here.
 
