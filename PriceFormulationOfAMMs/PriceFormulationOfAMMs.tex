@@ -73,7 +73,7 @@
 
 The purpose of this research note is to explore a way of defining Constant Function Market Makers (CFMMs) by their price functions $p(x,y)$, where $x$ is the quantity of one asset, $y$ the quantity of the second asset, and $p(x,y)$ the spot price of $x$ with numeraire $y$.
 
-Given intervals $I_1\subset [0,\infty)$ and $I_2\subset [0,\infty)$, we define $p:I_1 \times I_2 \to [0,\infty)$ to be a \textbf{price function} provided that $p(x,y)$
+Given intervals $I_1\subset (0,\infty)$ and $I_2\subset (0,\infty)$, we define $p:I_1 \times I_2 \to [0,\infty)$ to be a \textbf{price function} provided that $p(x,y)$
 \begin{enumerate}
 \item is non-increasing in $x$,
 \item is non-decreasing in $y$,
@@ -103,7 +103,20 @@ Furthermore,
 \frac{\partial K}{\partial y} &= \frac{1}{u(x)}
 \end{align*}
 
-Thus the spot price of the CFMM using $K(x,y)$ as the constant function will be $p(x,y)$.
+By the chain rule, the spot price is
+$$
+\frac{dy}{dx} = -\frac{\frac{\partial K}{\partial x}}{\frac{\partial K}{\partial y}} = -\frac{y}{u(x)}p(x,y)
+$$
+
+Since $y=u(x)$, the spot price of the CFMM using $K(x,y)$ as the constant function will be $p(x,y)$.
+
+%\subsection{Relation to payoff function}
+
+
+
+%\subsection{From a CFMM to a pricing function}
+
+%Let $K:[0,\infty)^2 \to (0,\infty)$ be a differentiable, one-to-one function.
 
 
 \subsection{Properties}
@@ -113,21 +126,63 @@ We define the weights intuitively as the percentages of the pool made up of each
 W_x &= \frac{xp(x,y)}{xp(x,y) + y}\\
 W_y &= \frac{y}{xp(x,y) + y}\\
 \end{align*}
-
 Observe that this implies that $p(x,y) = \frac{W_x}{W_y}\frac{y}{x}$, the familiar constant product CFMM price formula.
 
-\section{Scale-Invariant Price Functions}
+\section{Example: Reweighting CFMM}
 
-We say a price function is \textbf{scale-invariant} if $p(kx,ky) = p(x,y)$.
+\subsection{Reweighting CFMM Definition}
 
-\section{Composing Price Functions}
+We consider as an example price functions of the general form
+$$
+p(x,y) = C\left(\frac{y + \alpha}{x + \beta}\right)^{a+1},
+$$
+where $C,\alpha,\beta > 0$, and $a \geq -1$. Clearly $a=0$ is the constant product AMM and $a=-1$ is the constant sum AMM.
 
+It turns out that $a>0$ gives us a family of reweighting AMMs.
+Our ODE turns into
+\begin{align*}
+u'(x) &= - C\left(\frac{u + \alpha}{x + \beta}\right)^{a+1}\\
+u(x_0) &= y_0
+\end{align*}
+This is separable, so we must simply solve
+$$
+\int (u + \alpha)^{-a-1} du = -C\int (x + \beta)^{-a-1} dx
+$$
+Doing this, we find the following swap invariant function:
+$$
+K(x,y) = \left((y + \alpha)^{-a} + C(x + \beta)^{-a}\right)^{-\frac{1}{a}}
+$$
 
+Note that
+$$
+W_x = \frac{xp(x,y)}{xp(x,y) + y} = \frac{xC\left(y + \alpha\right)^{a+1}}{xC\left(y + \alpha\right)^{a+1} + y(x + \beta)^{a+1}}
+$$
+When $\alpha = \beta = 0$, we see
+$$
+W_x = \frac{Cy^a}{Cy^a + x^a}
+$$
+It's clear from this equation that at $a=0$ the weight is constant (since it's just a constant product AMM), but with $a>0$, the AMM \emph{reweights} towards the token being purchased
+(that is, if $x$ decreases and $y$ increases, $W_x$ increases).
+The curvature of the reweighting CFMM is higher than that of the constant product CFMM, resulting in this reweighting.
+In the language of AMMs, higher $a$ produces lower impermanent loss at the expense of subjecting traders to increased slippage.
 
-%Your text goes here.
+\subsection{Asymptotes of the Reweighting CFMM}
 
-%\subsection{A subsection}
+We introduced the Reweighting AMM with $\alpha$ and $\beta$ not just for the sake of generalization, but because the choice of $\alpha = \beta = 0$ is problematic.
+We would like $\lim_{x\to \infty} y = 0$ and $\lim_{y\to \infty} x = 0$, but we see that this requires
+\begin{align*}
+\alpha &= K(x,y)\\
+\beta &= C^\frac{1}{a} K(x,y)
+\end{align*}
+We therefore adjust to
+$$
+K^{-a}(x,y) = (y + K(x,y))^{-a} + (C^{-\frac{1}{a}}x + K(x,y))^{-a}
+$$
+recalling that $K(x,y)$ is constant during a swap.
 
-%More text.
+Note that this transition has actually adjusted our price function to
+$$
+p(x,y) = C\left(\frac{y + K(x,y)}{x + C^\frac{1}{a} K(x,y)}\right)^{a+1},
+$$
 
 \end{document}
