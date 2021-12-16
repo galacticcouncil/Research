@@ -1,0 +1,8 @@
+@misc{angeris2021replicating,
+      title={Replicating Market Makers}, 
+      author={Guillermo Angeris and Alex Evans and Tarun Chitra},
+      year={2021},
+      eprint={2103.14769},
+      archivePrefix={arXiv},
+      primaryClass={q-fin.MF}
+}

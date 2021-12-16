@@ -73,7 +73,7 @@
 
 The purpose of this research note is to explore a way of defining Constant Function Market Makers (CFMMs) by their price functions $p(x,y)$, where $x$ is the quantity of one asset, $y$ the quantity of the second asset, and $p(x,y)$ the spot price of $x$ with numeraire $y$.
 
-Given intervals $I_1\subset (0,\infty)$ and $I_2\subset (0,\infty)$, we define $p:I_1 \times I_2 \to [0,\infty)$ to be a \textbf{price function} provided that $p(x,y)$
+Given intervals $I_1\subset (0,\infty)$ and $I_2\subset (0,\infty)$, we define $p:I_1 \times I_2 \to (0,\infty)$ to be a \textbf{price function} provided that $p(x,y)$
 \begin{enumerate}
 \item is non-increasing in $x$,
 \item is non-decreasing in $y$,
@@ -109,6 +109,9 @@ $$
 $$
 
 Since $y=u(x)$, the spot price of the CFMM using $K(x,y)$ as the constant function will be $p(x,y)$.
+
+Note that the $K(x,y)$ constructed here is a "trading function" by the definition in ~\cite{angeris2021replicating}.
+That work is more general than this, and more exotic trading functions may not have price functions satisfying the criteria listed above (in particularly, Lipschitz continuity).
 
 %\subsection{Relation to payoff function}
 
@@ -185,4 +188,36 @@ $$
 p(x,y) = C\left(\frac{y + K(x,y)}{x + C^\frac{1}{a} K(x,y)}\right)^{a+1},
 $$
 
+\section{Composite CFMMs}
+
+Throughout this section we use $p_A^B$ to indicate the spot price of asset $A$ denominated in $B$.
+
+\subsection{CFMMs sharing a token}
+
+If a particular asset $x$ is in two CFMMs given by price functions $p_1(x,y)$ and $p_2(x,z)$, observe that $p(y,z) = \frac{p_2(x,z)}{p_1(x,y)}$ is also a price function. This is a simple way to compose two CFMMs.
+
+This can also be used to construct a composite CFMM with two different pools for token $x$, by considering the pools to be different tokens $x_1$ and $x_2$ related by $p(x_1,x_2) = 1$.
+
+\subsection{Liquidity Provider Tokens}
+
+The Liquidity Provider (LP) token of a CFMM entitles the holder to some portion of the assets in the CFMM reserves.
+
+Suppose we have a CFMM defined by price function $p_1(x,y)$. Let $L$ represent the LP token of this CFMM, and denote by $L_T$ the quantity of LP tokens for this pool in existence.
+Since the LP tokens altogether entitle their holders to the assets in the CFMM, we see that the spot price
+$$
+p_L^y = \frac{xp_1(x,y) + y}{L_T}
+$$
+Note that this is a price function in $L_T$ and $y$.
+
+We can then consider what happens if the LP tokens are provided to a CFMM defined by price function $p_2(L, z)$.
+For prices to be arbitrage free, we must have
+$$
+p_z^y = \frac{p_L^y}{p_L^z} = \frac{xp_1(x,y) + y}{L_Tp_2(L, z)}
+$$
+Note that this is a price function. We now have an arbitrage-free three token pool.
+
+\bibliography{mybib.txt}{}
+\bibliographystyle{plain}
 \end{document}
+
+
